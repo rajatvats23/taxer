@@ -1,0 +1,50 @@
+<!-- src/app/components/tax-slab-list.component.html -->
+<div class="slab-list-container">
+  <h2>Tax Slabs</h2>
+
+  @if (loading()) {
+    <div class="loading">Loading...</div>
+  }
+  
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  @if (!loading() && slabs().length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th>Min Income</th>
+          <th>Max Income</th>
+          <th>Tax Rate</th>
+          @if (authService.isAdmin()) {
+            <th>Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (slab of slabs(); track slab.id) {
+          <tr>
+            <td>₹{{ slab.minIncome | number }}</td>
+            <td>₹{{ slab.maxIncome === Infinity ? '∞' : (slab.maxIncome | number) }}</td>
+            <td>{{ slab.taxRate }}%</td>
+            @if (authService.isAdmin()) {
+              <td>
+                @if (authService.canEdit()) {
+                  <button class="btn-edit">Edit</button>
+                }
+                @if (authService.canDelete()) {
+                  <button class="btn-delete" (click)="deleteSlab(slab.id)">Delete</button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!loading() && slabs().length === 0) {
+    <div class="empty-state">No tax slabs found</div>
+  }
+</div>

@@ -1,0 +1,75 @@
+<!-- src/app/components/tax-calculator.component.html -->
+<div class="calculator-container">
+  <h2>Tax Calculator</h2>
+  
+  <form [formGroup]="taxForm" (ngSubmit)="calculate()">
+    <div class="form-group">
+      <label for="income">Annual Income (₹)</label>
+      <input 
+        type="number" 
+        id="income" 
+        formControlName="income"
+        placeholder="Enter income">
+      @if (taxForm.get('income')?.invalid && taxForm.get('income')?.touched) {
+        <div class="error">Please enter a valid income</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="age">Age</label>
+      <input 
+        type="number" 
+        id="age" 
+        formControlName="age"
+        placeholder="Enter age">
+      @if (taxForm.get('age')?.invalid && taxForm.get('age')?.touched) {
+        <div class="error">Please enter a valid age (0-120)</div>
+      }
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="btn-primary">Calculate Tax</button>
+      <button type="button" class="btn-secondary" (click)="reset()">Reset</button>
+    </div>
+  </form>
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  @if (result()) {
+    <div class="result-container">
+      <h3>Tax Calculation Result</h3>
+      <div class="result-summary">
+        <p><strong>Total Tax:</strong> ₹{{ result()!.totalTax | number:'1.2-2' }}</p>
+        <p><strong>Effective Rate:</strong> {{ result()!.effectiveRate | number:'1.2-2' }}%</p>
+      </div>
+
+      @if (result()!.breakdown.length > 0) {
+        <div class="breakdown">
+          <h4>Tax Breakdown</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Income Range</th>
+                <th>Tax Rate</th>
+                <th>Taxable Amount</th>
+                <th>Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of result()!.breakdown; track item.slab.id) {
+                <tr>
+                  <td>₹{{ item.slab.minIncome | number }} - ₹{{ item.slab.maxIncome | number }}</td>
+                  <td>{{ item.slab.taxRate }}%</td>
+                  <td>₹{{ item.taxableAmount | number:'1.2-2' }}</td>
+                  <td>₹{{ item.taxAmount | number:'1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>
