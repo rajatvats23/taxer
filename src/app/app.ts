@@ -1,16 +1,24 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TaxCalculatorComponent } from './components/tax-calculator.component';
 import { TaxSlabListComponent } from './components/tax-slab-list.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TaxCalculatorComponent, TaxSlabListComponent],
+  standalone: true,
+  imports: [MatTabsModule, TaxCalculatorComponent, TaxSlabListComponent],
   template: `
     <div class="container">
       <h1>Tax Management System</h1>
-      <app-tax-calculator />
-      <app-tax-slab-list />
+      
+      <mat-tab-group>
+        <mat-tab label="Tax Calculator">
+          <app-tax-calculator />
+        </mat-tab>
+        <mat-tab label="Manage Tax Slabs">
+          <app-tax-slab-list />
+        </mat-tab>
+      </mat-tab-group>
     </div>
   `,
   styles: [`
@@ -21,10 +29,13 @@ import { TaxSlabListComponent } from './components/tax-slab-list.component';
     }
     h1 {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
+    }
+    mat-tab-group {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
   `]
 })
-export class App {
-  protected readonly title = signal('taxer');
-}
+export class App {}

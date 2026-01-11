@@ -2,13 +2,24 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { TaxCalculationService } from '../services/tax-calculation.service';
 import { TaxCalculationResult } from '../models/tax-slab.model';
 
 @Component({
   selector: 'app-tax-calculator',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule
+  ],
   templateUrl: './tax-calculator.component.html',
   styleUrls: ['./tax-calculator.component.css']
 })

@@ -1,50 +1,100 @@
 <!-- src/app/components/tax-slab-list.component.html -->
 <div class="slab-list-container">
-  <h2>Tax Slabs</h2>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Tax Slabs Management</mat-card-title>
+    </mat-card-header>
 
-  @if (loading()) {
-    <div class="loading">Loading...</div>
-  }
-  
-  @if (error()) {
-    <div class="error-message">{{ error() }}</div>
-  }
+    <mat-card-content>
+      @if (loading()) {
+        <div class="loading">
+          <mat-spinner></mat-spinner>
+        </div>
+      }
+      
+      @if (error()) {
+        <mat-card class="error-card">
+          {{ error() }}
+        </mat-card>
+      }
 
-  @if (!loading() && slabs().length > 0) {
-    <table>
-      <thead>
-        <tr>
-          <th>Min Income</th>
-          <th>Max Income</th>
-          <th>Tax Rate</th>
-          @if (authService.isAdmin()) {
-            <th>Actions</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (slab of slabs(); track slab.id) {
-          <tr>
-            <td>₹{{ slab.minIncome | number }}</td>
-            <td>₹{{ slab.maxIncome === Infinity ? '∞' : (slab.maxIncome | number) }}</td>
-            <td>{{ slab.taxRate }}%</td>
-            @if (authService.isAdmin()) {
-              <td>
-                @if (authService.canEdit()) {
-                  <button class="btn-edit">Edit</button>
+      @if (!loading() && slabs().length > 0) {
+        <table mat-table [dataSource]="slabs()" class="mat-elevation-z2">
+          
+          <ng-container matColumnDef="minIncome">
+            <th mat-header-cell *matHeaderCellDef>Min Income</th>
+            <td mat-cell *matCellDef="let slab">
+              @if (editingId() === slab.id) {
+                <mat-form-field appearance="outline" class="edit-field">
+                  <input matInput type="number" [formControl]="editForm.controls.minIncome">
+                </mat-form-field>
+              } @else {
+                ₹{{ slab.minIncome | number }}
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="maxIncome">
+            <th mat-header-cell *matHeaderCellDef>Max Income</th>
+            <td mat-cell *matCellDef="let slab">
+              @if (editingId() === slab.id) {
+                <mat-form-field appearance="outline" class="edit-field">
+                  <input matInput type="number" [formControl]="editForm.controls.maxIncome">
+                </mat-form-field>
+              } @else {
+                ₹{{ slab.maxIncome === Infinity ? '∞' : (slab.maxIncome | number) }}
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="taxRate">
+            <th mat-header-cell *matHeaderCellDef>Tax Rate</th>
+            <td mat-cell *matCellDef="let slab">
+              @if (editingId() === slab.id) {
+                <mat-form-field appearance="outline" class="edit-field">
+                  <input matInput type="number" [formControl]="editForm.controls.taxRate">
+                </mat-form-field>
+              } @else {
+                {{ slab.taxRate }}%
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let slab">
+              @if (authService.isAdmin()) {
+                @if (editingId() === slab.id) {
+                  <button mat-icon-button color="primary" (click)="saveEdit(slab.id)">
+                    <mat-icon>save</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="cancelEdit()">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                } @else {
+                  @if (authService.canEdit()) {
+                    <button mat-icon-button color="primary" (click)="startEdit(slab)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  }
+                  @if (authService.canDelete()) {
+                    <button mat-icon-button color="warn" (click)="deleteSlab(slab.id)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
                 }
-                @if (authService.canDelete()) {
-                  <button class="btn-delete" (click)="deleteSlab(slab.id)">Delete</button>
-                }
-              </td>
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
+              }
+            </td>
+          </ng-container>
 
-  @if (!loading() && slabs().length === 0) {
-    <div class="empty-state">No tax slabs found</div>
-  }
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      }
+
+      @if (!loading() && slabs().length === 0) {
+        <div class="empty-state">No tax slabs found</div>
+      }
+    </mat-card-content>
+  </mat-card>
 </div>

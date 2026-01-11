@@ -1,0 +1,89 @@
+/* src/app/components/tax-calculator.component.css */
+
+.calculator-container {
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.error-card {
+  background: #ffebee;
+  color: #c62828;
+  margin-top: 20px;
+  padding: 16px;
+}
+
+.result-card {
+  margin-top: 30px;
+  background: #e3f2fd;
+}
+
+.result-summary {
+  margin-bottom: 25px;
+}
+
+.result-summary p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.result-summary strong {
+  color: #1976d2;
+}
+
+.breakdown {
+  margin-top: 25px;
+}
+
+h4 {
+  color: #424242;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+thead {
+  background: #424242;
+  color: white;
+}
+
+th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+tbody tr:hover {
+  background: #f5f5f5;
+}
+
+td {
+  padding: 12px;
+}
+
+@media (max-width: 768px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-group button {
+    width: 100%;
+  }
+}
