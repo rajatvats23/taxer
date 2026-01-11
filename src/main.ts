@@ -1,12 +1,7 @@
 // src/main.ts
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { appConfig } from './app/app.config';
 import { App } from './app/app';
 
-bootstrapApplication(App, {
-  providers: [
-    provideHttpClient(),
-    provideAnimationsAsync()
-  ]
-}).catch(err => console.error(err));
+bootstrapApplication(App, appConfig)
+  .catch(err => console.error(err));

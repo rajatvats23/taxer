@@ -62,14 +62,20 @@ export class TaxSlabListComponent implements OnInit {
         this.slabs.set(slabs);
         this.loading.set(false);
       },
-      error: () => {
+      error: (err) => {
         this.error.set('Failed to load tax slabs');
         this.loading.set(false);
+        console.error('Load error:', err);
       }
     });
   }
 
   startEdit(slab: TaxSlab): void {
+    if (!this.authService.canEdit()) {
+      this.error.set('You do not have permission to edit');
+      return;
+    }
+    
     this.editingId.set(slab.id);
     this.editForm.patchValue({
       minIncome: slab.minIncome,
@@ -81,15 +87,23 @@ export class TaxSlabListComponent implements OnInit {
   cancelEdit(): void {
     this.editingId.set(null);
     this.editForm.reset();
+    this.error.set(null);
   }
 
   saveEdit(id: number): void {
+    if (!this.authService.canEdit()) {
+      this.error.set('You do not have permission to edit');
+      return;
+    }
+
     if (this.editForm.invalid) {
       this.error.set('Please enter valid values');
       return;
     }
 
     const values = this.editForm.value;
+    this.loading.set(true);
+    
     this.taxSlabService.update(id, {
       minIncome: values.minIncome!,
       maxIncome: values.maxIncome!,
@@ -97,10 +111,13 @@ export class TaxSlabListComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.editingId.set(null);
+        this.error.set(null);
         this.loadSlabs();
       },
-      error: () => {
+      error: (err) => {
         this.error.set('Failed to update tax slab');
+        this.loading.set(false);
+        console.error('Update error:', err);
       }
     });
   }
@@ -112,9 +129,17 @@ export class TaxSlabListComponent implements OnInit {
     }
 
     if (confirm('Are you sure you want to delete this tax slab?')) {
+      this.loading.set(true);
       this.taxSlabService.delete(id).subscribe({
-        next: () => this.loadSlabs(),
-        error: () => this.error.set('Failed to delete tax slab')
+        next: () => {
+          this.error.set(null);
+          this.loadSlabs();
+        },
+        error: (err) => {
+          this.error.set('Failed to delete tax slab');
+          this.loading.set(false);
+          console.error('Delete error:', err);
+        }
       });
     }
   }
